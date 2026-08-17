@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Profile — Mint Eclipse</title>
+<meta name="description" content="Edit your Mint Eclipse profile and see your activity.">
+<link rel="icon" type="image/svg+xml" href="assets/favicon.svg">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="assets/css/style.css">
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+</head>
+<body>
+
+<div class="bg-scene" aria-hidden="true">
+  <div class="orb orb--teal"></div>
+  <div class="orb orb--mint"></div>
+  <div class="orb orb--mint2"></div>
+</div>
+
+<!-- ============ NAVBAR ============ -->
+<nav class="nav">
+  <div class="container nav-inner">
+    <a class="brand" href="index.html">
+      <svg width="32" height="32" viewBox="0 0 100 100" fill="none" aria-hidden="true">
+        <circle cx="50" cy="46" r="22" fill="#1f4037"/>
+        <circle cx="50" cy="46" r="22" stroke="#3ebfa2" stroke-width="5"/>
+        <path d="M28 76 q8 -8 16 0 t16 0 t16 0" stroke="#3ebfa2" stroke-width="4" stroke-linecap="round"/>
+        <circle cx="50" cy="46" r="9" fill="#0a100e"/>
+      </svg>
+      <span class="brand-name">Mint<b>Eclipse</b></span>
+    </a>
+
+    <div class="nav-links">
+      <a class="nav-link" data-page="home" href="index.html">Home</a>
+      <a class="nav-link" data-page="bucket" href="bucket.html">Bucket List</a>
+      <a class="nav-link" data-page="events" href="events.html">Events & Letters</a>
+      <a class="nav-link" data-page="photos" href="photos.html">Photos</a>
+    </div>
+
+    <div class="nav-right">
+      <a class="btn btn--outline btn--sm" href="login.html" data-guest-only>Sign In</a>
+      <div class="avatar-wrap" data-auth-required>
+        <div class="avatar js-initials" onclick="toggleDropdown()">G</div>
+        <div class="dropdown">
+          <div class="dropdown-head">
+            <div class="d-name js-d-name">Guest</div>
+            <div class="d-id js-d-id">Not signed in</div>
+          </div>
+          <a href="profile.html">🙍 Edit Profile</a>
+          <a href="events.html">✉️ My Letters</a>
+          <a href="photos.html">🖼 My Photos</a>
+          <button class="drop-item danger" onclick="logout()">🚪 Sign Out</button>
+        </div>
+      </div>
+      <button class="burger" aria-label="Open menu" onclick="toggleSidebar()">
+        <span></span><span></span><span></span>
+      </button>
+    </div>
+  </div>
+</nav>
+
+<!-- ============ MOBILE SIDEBAR ============ -->
+<aside class="sidebar" id="sidebar">
+  <a class="brand" href="index.html">
+    <svg width="30" height="30" viewBox="0 0 100 100" fill="none" aria-hidden="true">
+      <circle cx="50" cy="46" r="22" fill="#1f4037"/>
+      <circle cx="50" cy="46" r="22" stroke="#3ebfa2" stroke-width="5"/>
+      <path d="M28 76 q8 -8 16 0 t16 0 t16 0" stroke="#3ebfa2" stroke-width="4" stroke-linecap="round"/>
+      <circle cx="50" cy="46" r="9" fill="#0a100e"/>
+    </svg>
+    <span class="brand-name">Mint<b>Eclipse</b></span>
+  </a>
+  <a class="s-link" data-page="home" href="index.html">🏠 Home</a>
+  <a class="s-link" data-page="bucket" href="bucket.html">🎯 Bucket List</a>
+  <a class="s-link" data-page="events" href="events.html">📜 Events & Letters</a>
+  <a class="s-link" data-page="photos" href="photos.html">📷 Photos</a>
+  <div class="s-auth">
+    <a class="btn" href="login.html" data-guest-only>Sign In</a>
+    <a class="btn btn--outline" href="profile.html" data-auth-required>Edit Profile</a>
+    <button class="btn btn--ghost" onclick="logout()" data-auth-required>Sign Out</button>
+  </div>
+</aside>
+<div class="sidebar-backdrop" id="sidebarBackdrop" onclick="closeSidebar()"></div>
+
+<!-- ============ MAIN ============ -->
+<main>
+  <section class="page">
+    <h1 class="page-title">🙍 Your Profile</h1>
+    <p class="page-sub">This is your corner of Mint Eclipse. Edit your details, copy your User ID, and check how your world is growing.</p>
+
+    <!-- Profile head -->
+    <div class="card profile-head-card">
+      <div class="avatar avatar--lg js-initials">G</div>
+      <div style="flex:1; min-width:220px;">
+        <h2 class="js-p-name" style="font-size:1.6rem;">Mint Explorer</h2>
+        <p class="muted js-p-bio" style="margin-top:0.3rem;">New to Mint Eclipse 🌙</p>
+        <p class="profile-id" style="margin-top:0.7rem;">
+          User ID: <code class="js-p-id">—</code>
+          <button class="copy-btn" onclick="copyUserId()">Copy</button>
+        </p>
+        <p class="muted" style="font-size:0.82rem; margin-top:0.3rem;">Joined <span class="js-p-joined">—</span></p>
+      </div>
+    </div>
+
+    <!-- Stats -->
+    <div class="stat-grid">
+      <div class="stat"><div class="v" id="statLetters">0</div><div class="l">Letters</div></div>
+      <div class="stat"><div class="v" id="statBucket">0/0</div><div class="l">Bucket done</div></div>
+      <div class="stat"><div class="v" id="statEvents">0</div><div class="l">Events</div></div>
+      <div class="stat"><div class="v" id="statPhotos">0</div><div class="l">Photos</div></div>
+    </div>
+
+    <!-- Tabs -->
+    <div class="profile-tabs">
+      <button class="btn btn--sm active profile-tab-btn" data-tab="edit" onclick="switchProfileTab('edit')">✏️ Edit Profile</button>
+      <button class="btn btn--sm btn--outline profile-tab-btn" data-tab="letters" onclick="switchProfileTab('letters')">✉️ My Letters</button>
+      <button class="btn btn--sm btn--ghost profile-tab-btn" data-tab="share" onclick="switchProfileTab('share')">🔗 Share ID</button>
+    </div>
+
+    <!-- Tab: Edit -->
+    <div class="profile-tab-content" id="profileTab_edit">
+      <div class="card" style="max-width:620px;">
+        <form id="profileForm" onsubmit="saveProfile(event)">
+          <div class="form-group">
+            <label>Display Name</label>
+            <input class="input" name="displayName" type="text" autocomplete="name">
+          </div>
+          <div class="form-group">
+            <label>Bio</label>
+            <textarea name="bio" placeholder="Tell the world a little about you…"></textarea>
+          </div>
+          <button class="btn" type="submit">💾 Save Changes</button>
+        </form>
+      </div>
+    </div>
+
+    <!-- Tab: Letters -->
+    <div class="profile-tab-content" id="profileTab_letters" style="display:none;">
+      <div id="profileMyLetters"></div>
+    </div>
+
+    <!-- Tab: Share -->
+    <div class="profile-tab-content" id="profileTab_share" style="display:none;">
+      <div class="card" style="max-width:620px;">
+        <h3 style="margin-bottom:0.4rem;">Share your User ID</h3>
+        <p class="muted" style="margin-bottom:1rem;">
+          Anyone with this ID can seal a timed letter to you. It will land in your vault and unlock when they choose.
+        </p>
+        <div class="user-id-box">
+          <code class="js-p-id">—</code>
+          <button class="btn btn--sm" onclick="copyUserId()">📋 Copy</button>
+        </div>
+        <p class="muted" style="font-size:0.85rem;">💡 Tip: paste it in your bio on other apps so friends can find you.</p>
+      </div>
+    </div>
+  </section>
+</main>
+
+<!-- ============ FOOTER ============ -->
+<footer class="footer">
+  <div class="container footer-inner">
+    <span>© 2026 Mint Eclipse — send time, seal memories.</span>
+    <span>Made with 🌙 + 💚</span>
+  </div>
+</footer>
+
+<div class="toast-wrap"></div>
+
+<script src="assets/js/app.js"></script>
+</body>
+</html>

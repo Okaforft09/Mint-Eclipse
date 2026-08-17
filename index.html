@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Mint Eclipse — Send Time, Seal Memories</title>
+<meta name="description" content="Mint Eclipse: write timed letters, keep a bucket list, plan events, and store your photos.">
+<link rel="icon" type="image/svg+xml" href="assets/favicon.svg">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="assets/css/style.css">
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+</head>
+<body>
+
+<div class="bg-scene" aria-hidden="true">
+  <div class="orb orb--teal"></div>
+  <div class="orb orb--mint"></div>
+  <div class="orb orb--mint2"></div>
+</div>
+
+<!-- ============ NAVBAR ============ -->
+<nav class="nav">
+  <div class="container nav-inner">
+    <a class="brand" href="index.html">
+      <svg width="32" height="32" viewBox="0 0 100 100" fill="none" aria-hidden="true">
+        <circle cx="50" cy="46" r="22" fill="#1f4037"/>
+        <circle cx="50" cy="46" r="22" stroke="#3ebfa2" stroke-width="5"/>
+        <path d="M28 76 q8 -8 16 0 t16 0 t16 0" stroke="#3ebfa2" stroke-width="4" stroke-linecap="round"/>
+        <circle cx="50" cy="46" r="9" fill="#0a100e"/>
+      </svg>
+      <span class="brand-name">Mint<b>Eclipse</b></span>
+    </a>
+
+    <div class="nav-links">
+      <a class="nav-link" data-page="home" href="index.html">Home</a>
+      <a class="nav-link" data-page="bucket" href="bucket.html">Bucket List</a>
+      <a class="nav-link" data-page="events" href="events.html">Events & Letters</a>
+      <a class="nav-link" data-page="photos" href="photos.html">Photos</a>
+    </div>
+
+    <div class="nav-right">
+      <a class="btn btn--outline btn--sm" href="login.html" data-guest-only>Sign In</a>
+      <div class="avatar-wrap" data-auth-required>
+        <div class="avatar js-initials" onclick="toggleDropdown()">G</div>
+        <div class="dropdown">
+          <div class="dropdown-head">
+            <div class="d-name js-d-name">Guest</div>
+            <div class="d-id js-d-id">Not signed in</div>
+          </div>
+          <a href="profile.html">🙍 Edit Profile</a>
+          <a href="events.html">✉️ My Letters</a>
+          <a href="photos.html">🖼 My Photos</a>
+          <button class="drop-item danger" onclick="logout()">🚪 Sign Out</button>
+        </div>
+      </div>
+      <button class="burger" aria-label="Open menu" onclick="toggleSidebar()">
+        <span></span><span></span><span></span>
+      </button>
+    </div>
+  </div>
+</nav>
+
+<!-- ============ MOBILE SIDEBAR ============ -->
+<aside class="sidebar" id="sidebar">
+  <a class="brand" href="index.html">
+    <svg width="30" height="30" viewBox="0 0 100 100" fill="none" aria-hidden="true">
+      <circle cx="50" cy="46" r="22" fill="#1f4037"/>
+      <circle cx="50" cy="46" r="22" stroke="#3ebfa2" stroke-width="5"/>
+      <path d="M28 76 q8 -8 16 0 t16 0 t16 0" stroke="#3ebfa2" stroke-width="4" stroke-linecap="round"/>
+      <circle cx="50" cy="46" r="9" fill="#0a100e"/>
+    </svg>
+    <span class="brand-name">Mint<b>Eclipse</b></span>
+  </a>
+  <a class="s-link" data-page="home" href="index.html">🏠 Home</a>
+  <a class="s-link" data-page="bucket" href="bucket.html">🎯 Bucket List</a>
+  <a class="s-link" data-page="events" href="events.html">📜 Events & Letters</a>
+  <a class="s-link" data-page="photos" href="photos.html">📷 Photos</a>
+  <div class="s-auth">
+    <a class="btn" href="login.html" data-guest-only>Sign In</a>
+    <a class="btn btn--outline" href="profile.html" data-auth-required>Edit Profile</a>
+    <button class="btn btn--ghost" onclick="logout()" data-auth-required>Sign Out</button>
+  </div>
+</aside>
+<div class="sidebar-backdrop" id="sidebarBackdrop" onclick="closeSidebar()"></div>
+
+<!-- ============ MAIN ============ -->
+<main>
+  <section class="page">
+    <div class="hero">
+      <span class="eclipse">
+        <svg width="110" height="110" viewBox="0 0 100 100" fill="none" aria-hidden="true">
+          <circle cx="50" cy="46" r="22" fill="#1f4037"/>
+          <circle cx="50" cy="46" r="22" stroke="#3ebfa2" stroke-width="5"/>
+          <path d="M28 76 q8 -8 16 0 t16 0 t16 0" stroke="#3ebfa2" stroke-width="4" stroke-linecap="round"/>
+          <circle cx="50" cy="46" r="9" fill="#0a100e"/>
+        </svg>
+      </span>
+      <h1>Send <span class="grad-word">time</span>,<br>seal your <span class="grad-word">memories</span>.</h1>
+      <p class="lede">
+        Mint Eclipse is a place to write letters that unlock in the future, dream up a bucket list,
+        gather people for events, and keep the places and things you love in one glowing gallery.
+      </p>
+      <div class="hero-actions">
+        <a class="btn" href="events.html">✉️ Write a Timed Letter</a>
+        <a class="btn btn--outline" href="photos.html">📷 Browse Photos</a>
+      </div>
+    </div>
+
+    <div class="feature-grid">
+      <button class="feature" onclick="location.href='bucket.html'">
+        <div class="f-icon">🎯</div>
+        <h3>Bucket List</h3>
+        <p>Dream out loud. Add goals, tick them off as you go, and watch your progress grow.</p>
+      </button>
+      <button class="feature" onclick="location.href='events.html'">
+        <div class="f-icon">📜</div>
+        <h3>Timed Letters</h3>
+        <p>Seal a letter to a friend's User ID and set the exact moment it unlocks.</p>
+      </button>
+      <button class="feature" onclick="location.href='events.html'">
+        <div class="f-icon">🎉</div>
+        <h3>Events</h3>
+        <p>Plan gatherings with a date, place and RSVP list — invite your people to show up.</p>
+      </button>
+      <button class="feature" onclick="location.href='photos.html'">
+        <div class="f-icon">🌅</div>
+        <h3>Photo Gallery</h3>
+        <p>Upload images of things and places that matter. Build a gallery of your world.</p>
+      </button>
+    </div>
+
+    <div class="how-row">
+      <div class="how-step">
+        <span class="n">1</span>
+        <h4>Create an account</h4>
+        <p>Sign up in seconds and you get your own User ID — your address for letters.</p>
+      </div>
+      <div class="how-step">
+        <span class="n">2</span>
+        <h4>Seal a letter</h4>
+        <p>Write to any User ID and set a timer. The letter stays blurred until the moment arrives.</p>
+      </div>
+      <div class="how-step">
+        <span class="n">3</span>
+        <h4>Watch it open</h4>
+        <p>When the clock runs out, the letter reveals itself. Time travel, delivered.</p>
+      </div>
+    </div>
+  </section>
+</main>
+
+<!-- ============ FOOTER ============ -->
+<footer class="footer">
+  <div class="container footer-inner">
+    <span>© 2026 Mint Eclipse — send time, seal memories.</span>
+    <span>Made with 🌙 + 💚</span>
+  </div>
+</footer>
+
+<div class="toast-wrap"></div>
+
+<script src="assets/js/app.js"></script>
+</body>
+</html>

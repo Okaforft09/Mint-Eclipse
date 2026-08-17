@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Bucket List — Mint Eclipse</title>
+<meta name="description" content="Dream big and track your bucket list on Mint Eclipse.">
+<link rel="icon" type="image/svg+xml" href="assets/favicon.svg">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="assets/css/style.css">
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+</head>
+<body>
+
+<div class="bg-scene" aria-hidden="true">
+  <div class="orb orb--teal"></div>
+  <div class="orb orb--mint"></div>
+  <div class="orb orb--mint2"></div>
+</div>
+
+<!-- ============ NAVBAR ============ -->
+<nav class="nav">
+  <div class="container nav-inner">
+    <a class="brand" href="index.html">
+      <svg width="32" height="32" viewBox="0 0 100 100" fill="none" aria-hidden="true">
+        <circle cx="50" cy="46" r="22" fill="#1f4037"/>
+        <circle cx="50" cy="46" r="22" stroke="#3ebfa2" stroke-width="5"/>
+        <path d="M28 76 q8 -8 16 0 t16 0 t16 0" stroke="#3ebfa2" stroke-width="4" stroke-linecap="round"/>
+        <circle cx="50" cy="46" r="9" fill="#0a100e"/>
+      </svg>
+      <span class="brand-name">Mint<b>Eclipse</b></span>
+    </a>
+
+    <div class="nav-links">
+      <a class="nav-link" data-page="home" href="index.html">Home</a>
+      <a class="nav-link" data-page="bucket" href="bucket.html">Bucket List</a>
+      <a class="nav-link" data-page="events" href="events.html">Events & Letters</a>
+      <a class="nav-link" data-page="photos" href="photos.html">Photos</a>
+    </div>
+
+    <div class="nav-right">
+      <a class="btn btn--outline btn--sm" href="login.html" data-guest-only>Sign In</a>
+      <div class="avatar-wrap" data-auth-required>
+        <div class="avatar js-initials" onclick="toggleDropdown()">G</div>
+        <div class="dropdown">
+          <div class="dropdown-head">
+            <div class="d-name js-d-name">Guest</div>
+            <div class="d-id js-d-id">Not signed in</div>
+          </div>
+          <a href="profile.html">🙍 Edit Profile</a>
+          <a href="events.html">✉️ My Letters</a>
+          <a href="photos.html">🖼 My Photos</a>
+          <button class="drop-item danger" onclick="logout()">🚪 Sign Out</button>
+        </div>
+      </div>
+      <button class="burger" aria-label="Open menu" onclick="toggleSidebar()">
+        <span></span><span></span><span></span>
+      </button>
+    </div>
+  </div>
+</nav>
+
+<!-- ============ MOBILE SIDEBAR ============ -->
+<aside class="sidebar" id="sidebar">
+  <a class="brand" href="index.html">
+    <svg width="30" height="30" viewBox="0 0 100 100" fill="none" aria-hidden="true">
+      <circle cx="50" cy="46" r="22" fill="#1f4037"/>
+      <circle cx="50" cy="46" r="22" stroke="#3ebfa2" stroke-width="5"/>
+      <path d="M28 76 q8 -8 16 0 t16 0 t16 0" stroke="#3ebfa2" stroke-width="4" stroke-linecap="round"/>
+      <circle cx="50" cy="46" r="9" fill="#0a100e"/>
+    </svg>
+    <span class="brand-name">Mint<b>Eclipse</b></span>
+  </a>
+  <a class="s-link" data-page="home" href="index.html">🏠 Home</a>
+  <a class="s-link" data-page="bucket" href="bucket.html">🎯 Bucket List</a>
+  <a class="s-link" data-page="events" href="events.html">📜 Events & Letters</a>
+  <a class="s-link" data-page="photos" href="photos.html">📷 Photos</a>
+  <div class="s-auth">
+    <a class="btn" href="login.html" data-guest-only>Sign In</a>
+    <a class="btn btn--outline" href="profile.html" data-auth-required>Edit Profile</a>
+    <button class="btn btn--ghost" onclick="logout()" data-auth-required>Sign Out</button>
+  </div>
+</aside>
+<div class="sidebar-backdrop" id="sidebarBackdrop" onclick="closeSidebar()"></div>
+
+<!-- ============ MAIN ============ -->
+<main>
+  <section class="page">
+    <h1 class="page-title">🎯 Bucket List</h1>
+    <p class="page-sub">Everything you still want to do, see and become. Add a dream, check it off when you live it — your progress bar grows with you.</p>
+
+    <div class="card" style="margin-bottom: 1.6rem;">
+      <form onsubmit="event.preventDefault(); addBucketItem();" style="display:flex; gap:0.8rem; flex-wrap:wrap;">
+        <input class="input" id="bucketInput" type="text" placeholder="Add something you dream of doing…" style="flex:1; min-width:200px;" autocomplete="off">
+        <button class="btn" type="submit">+ Add Goal</button>
+      </form>
+    </div>
+
+    <div class="bucket-progress card card--flat">
+      <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:0.5rem;">
+        <strong>Progress</strong>
+        <span class="muted" id="bucketCounter">0 / 0 done</span>
+      </div>
+      <div class="bar-track">
+        <div class="bar-fill" id="bucketFill" style="width:0%;"></div>
+      </div>
+    </div>
+
+    <div id="bucketList"></div>
+
+    <div class="empty-state" id="bucketEmpty" style="display:none;">
+      <div class="e-icon">🗺</div>
+      <h3>Your map is blank</h3>
+      <p>Add your first dream above and start filling the map.</p>
+    </div>
+  </section>
+</main>
+
+<!-- ============ FOOTER ============ -->
+<footer class="footer">
+  <div class="container footer-inner">
+    <span>© 2026 Mint Eclipse — send time, seal memories.</span>
+    <span>Made with 🌙 + 💚</span>
+  </div>
+</footer>
+
+<div class="toast-wrap"></div>
+
+<script src="assets/js/app.js"></script>
+</body>
+</html>

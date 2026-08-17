@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Photos — Mint Eclipse</title>
+<meta name="description" content="Upload and browse photos of things and places you love on Mint Eclipse.">
+<link rel="icon" type="image/svg+xml" href="assets/favicon.svg">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="assets/css/style.css">
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+</head>
+<body>
+
+<div class="bg-scene" aria-hidden="true">
+  <div class="orb orb--teal"></div>
+  <div class="orb orb--mint"></div>
+  <div class="orb orb--mint2"></div>
+</div>
+
+<!-- ============ NAVBAR ============ -->
+<nav class="nav">
+  <div class="container nav-inner">
+    <a class="brand" href="index.html">
+      <svg width="32" height="32" viewBox="0 0 100 100" fill="none" aria-hidden="true">
+        <circle cx="50" cy="46" r="22" fill="#1f4037"/>
+        <circle cx="50" cy="46" r="22" stroke="#3ebfa2" stroke-width="5"/>
+        <path d="M28 76 q8 -8 16 0 t16 0 t16 0" stroke="#3ebfa2" stroke-width="4" stroke-linecap="round"/>
+        <circle cx="50" cy="46" r="9" fill="#0a100e"/>
+      </svg>
+      <span class="brand-name">Mint<b>Eclipse</b></span>
+    </a>
+
+    <div class="nav-links">
+      <a class="nav-link" data-page="home" href="index.html">Home</a>
+      <a class="nav-link" data-page="bucket" href="bucket.html">Bucket List</a>
+      <a class="nav-link" data-page="events" href="events.html">Events & Letters</a>
+      <a class="nav-link" data-page="photos" href="photos.html">Photos</a>
+    </div>
+
+    <div class="nav-right">
+      <a class="btn btn--outline btn--sm" href="login.html" data-guest-only>Sign In</a>
+      <div class="avatar-wrap" data-auth-required>
+        <div class="avatar js-initials" onclick="toggleDropdown()">G</div>
+        <div class="dropdown">
+          <div class="dropdown-head">
+            <div class="d-name js-d-name">Guest</div>
+            <div class="d-id js-d-id">Not signed in</div>
+          </div>
+          <a href="profile.html">🙍 Edit Profile</a>
+          <a href="events.html">✉️ My Letters</a>
+          <a href="photos.html">🖼 My Photos</a>
+          <button class="drop-item danger" onclick="logout()">🚪 Sign Out</button>
+        </div>
+      </div>
+      <button class="burger" aria-label="Open menu" onclick="toggleSidebar()">
+        <span></span><span></span><span></span>
+      </button>
+    </div>
+  </div>
+</nav>
+
+<!-- ============ MOBILE SIDEBAR ============ -->
+<aside class="sidebar" id="sidebar">
+  <a class="brand" href="index.html">
+    <svg width="30" height="30" viewBox="0 0 100 100" fill="none" aria-hidden="true">
+      <circle cx="50" cy="46" r="22" fill="#1f4037"/>
+      <circle cx="50" cy="46" r="22" stroke="#3ebfa2" stroke-width="5"/>
+      <path d="M28 76 q8 -8 16 0 t16 0 t16 0" stroke="#3ebfa2" stroke-width="4" stroke-linecap="round"/>
+      <circle cx="50" cy="46" r="9" fill="#0a100e"/>
+    </svg>
+    <span class="brand-name">Mint<b>Eclipse</b></span>
+  </a>
+  <a class="s-link" data-page="home" href="index.html">🏠 Home</a>
+  <a class="s-link" data-page="bucket" href="bucket.html">🎯 Bucket List</a>
+  <a class="s-link" data-page="events" href="events.html">📜 Events & Letters</a>
+  <a class="s-link" data-page="photos" href="photos.html">📷 Photos</a>
+  <div class="s-auth">
+    <a class="btn" href="login.html" data-guest-only>Sign In</a>
+    <a class="btn btn--outline" href="profile.html" data-auth-required>Edit Profile</a>
+    <button class="btn btn--ghost" onclick="logout()" data-auth-required>Sign Out</button>
+  </div>
+</aside>
+<div class="sidebar-backdrop" id="sidebarBackdrop" onclick="closeSidebar()"></div>
+
+<!-- ============ MAIN ============ -->
+<main>
+  <section class="page">
+    <h1 class="page-title">📷 Photos</h1>
+    <p class="page-sub">Places you've been, things you love, moments worth keeping. Upload your own — they stay in your gallery, ready whenever you want to look back.</p>
+
+    <div class="card card--dashed" style="text-align:center; margin-bottom:1.8rem;">
+      <input type="file" id="photoUpload" accept="image/*" style="display:none;" onchange="uploadPhoto(this)">
+      <button class="btn" onclick="document.getElementById('photoUpload').click()">⬆️ Upload a Photo</button>
+      <p class="muted" style="margin-top:0.8rem; font-size:0.85rem;">Supports JPG, PNG, GIF and more. Click any photo to view it full size.</p>
+    </div>
+
+    <div class="photo-grid" id="photoGrid"></div>
+    <div class="photo-empty" id="photosEmpty" style="display:none;">
+      <div class="e-icon" style="font-size:3rem; margin-bottom:0.6rem;">🖼</div>
+      <strong>No photos yet</strong>
+      <p class="muted" style="margin-top:0.4rem;">Upload your first memory above.</p>
+    </div>
+  </section>
+</main>
+
+<!-- ============ LIGHTBOX ============ -->
+<div class="lightbox" id="lightbox" onclick="closeLightbox()">
+  <button class="l-close" onclick="event.stopPropagation(); closeLightbox()" aria-label="Close">✕</button>
+  <img id="lightboxImg" src="" alt="Photo preview">
+  <div class="l-cap" id="lightboxCap"></div>
+</div>
+
+<!-- ============ FOOTER ============ -->
+<footer class="footer">
+  <div class="container footer-inner">
+    <span>© 2026 Mint Eclipse — send time, seal memories.</span>
+    <span>Made with 🌙 + 💚</span>
+  </div>
+</footer>
+
+<div class="toast-wrap"></div>
+
+<script src="assets/js/app.js"></script>
+</body>
+</html>
